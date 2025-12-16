@@ -110,10 +110,12 @@ uv run 07-interruptible.py -t twilio -x NGROK_HOST_NAME
 ### Voice & Language
 
 - **[13-transcription.py](./13-transcription.py)**: Speech transcription demo (STT providers, Real-time transcription)
+- **[13c-gladia-translation.py](./13c-gladia-translation.py)**: Real-time speech translation with Gladia (Translation service)
 - **[15-switch-voices.py](./15-switch-voices.py)**: Dynamic voice/language changing (ParallelPipelines, FunctionFilters)
 - **[25-google-audio-in.py](./25-google-audio-in.py)**: Gemini for speech recognition (Alternative transcription)
 - **[35-pattern-pair-voice-switching.py](./35-pattern-pair-voice-switching.py)**: Dynamic TTS voice switching (XML parsing, PatternPairAggregator)
 - **[36-user-email-gathering.py](./36-user-email-gathering.py)**: Spelling mode for TTS (Confirmation patterns, XML tags)
+- **[translation-ru-en-websocket.py](./translation-ru-en-websocket.py)**: Real-time Russian to English translation (WebSocket transport, Low-latency duplex, Interim results) - [📖 README](./translation-ru-en-websocket-README.md)
 
 ### Integration Examples
 
