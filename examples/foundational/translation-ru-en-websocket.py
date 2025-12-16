@@ -24,6 +24,8 @@ from deepgram import LiveOptions
 from dotenv import load_dotenv
 from loguru import logger
 
+from pipecat.audio.vad.silero import SileroVADAnalyzer
+from pipecat.audio.vad.vad_analyzer import VADParams
 from pipecat.frames.frames import LLMRunFrame
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.runner import PipelineRunner
@@ -46,18 +48,22 @@ load_dotenv(override=True)
 
 # Transport configuration for different deployment scenarios
 # Stores factory functions to avoid early instantiation
+# VAD configured with minimal stop_secs for low latency
 transport_params = {
     "daily": lambda: DailyParams(
         audio_in_enabled=True,
         audio_out_enabled=True,
+        vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.1)),
     ),
     "twilio": lambda: FastAPIWebsocketParams(
         audio_in_enabled=True,
         audio_out_enabled=True,
+        vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.1)),
     ),
     "webrtc": lambda: TransportParams(
         audio_in_enabled=True,
         audio_out_enabled=True,
+        vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.1)),
     ),
 }
 
@@ -102,13 +108,7 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
     messages = [
         {
             "role": "system",
-            "content": """You are a real-time Russian to English translator. 
-Your job is to translate Russian speech to English as quickly and accurately as possible.
-- Translate ONLY what the user says, without adding commentary or explanations
-- Maintain the meaning and tone of the original message
-- Output natural, fluent English
-- Be concise and direct
-- Do not use special characters that can't be spoken""",
+            "content": "You are a real-time Russian to English translator. Your job is to translate Russian speech to English as quickly and accurately as possible. Translate ONLY what the user says, without adding commentary or explanations. Maintain the meaning and tone of the original message. Output natural, fluent English. Be concise and direct. Do not use special characters that can't be spoken.",
         },
     ]
 
@@ -145,7 +145,7 @@ Your job is to translate Russian speech to English as quickly and accurately as 
         """Handle new client connections."""
         logger.info("Client connected to translation service")
         # Send initial greeting in English
-        messages.append(
+        context.add_message(
             {
                 "role": "system",
                 "content": "Greet the user and let them know you will translate their Russian speech to English.",

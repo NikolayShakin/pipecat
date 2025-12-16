@@ -172,15 +172,26 @@ DeepgramSTTService(
 
 Smart formatting and punctuation add latency. For real-time translation, we prioritize speed over formatting.
 
-### 3. No Artificial Timers
+### 3. Minimal VAD Buffering
+```python
+TransportParams(
+    vad_analyzer=SileroVADAnalyzer(
+        params=VADParams(stop_secs=0.1)  # Minimal silence threshold
+    )
+)
+```
 
-The pipeline doesn't use silence detection timers or end-of-utterance delays. Translation begins immediately when text is available.
+VAD (Voice Activity Detection) is configured with minimal `stop_secs` (0.1 seconds) to detect speech boundaries quickly while maintaining duplex operation.
 
-### 4. Streaming LLM
+### 4. No Additional Timers
+
+Beyond the minimal VAD configuration, the pipeline doesn't use additional silence detection timers or end-of-utterance delays. Translation begins immediately when text is available.
+
+### 5. Streaming LLM
 
 OpenAI's streaming API is used to start speaking translated text as soon as the first tokens are generated, rather than waiting for the complete translation.
 
-### 5. True Duplex Operation
+### 6. True Duplex Operation
 
 The pipeline is configured for full-duplex audio:
 - User audio is continuously processed while the bot is speaking
