@@ -85,6 +85,23 @@ This will create a temporary Daily room for testing.
 
 ## Connecting a Client
 
+### Test Client (Included)
+
+A simple Python test client is included to verify the server is working:
+
+```bash
+# In a separate terminal, after starting the server
+python translation-ru-en-test-client.py
+
+# Or specify a custom server URL
+python translation-ru-en-test-client.py --url ws://localhost:8765
+
+# Test with an audio file (must be 16-bit PCM WAV, mono, 16kHz)
+python translation-ru-en-test-client.py --audio path/to/russian_audio.wav
+```
+
+**Note**: The test client provides basic connectivity testing. For production use with real microphone input, use the Pipecat client SDKs (JavaScript, React, iOS, Android, etc.).
+
 ### JavaScript/Browser Client
 
 ```javascript
