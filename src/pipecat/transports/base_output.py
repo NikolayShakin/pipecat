@@ -370,7 +370,7 @@ class BaseOutputTransport(FrameProcessor):
         else:
             await self._handle_frame(frame)
 
-    async def push_frame(self, frame: Frame, direction: FrameDirection):
+    async def push_frame(self, frame: Frame, direction: FrameDirection = FrameDirection.DOWNSTREAM):
         """Push a frame to the next processor in the pipeline."""
         if isinstance(frame, BotStoppedSpeakingFrame):
             destination = frame.transport_destination
