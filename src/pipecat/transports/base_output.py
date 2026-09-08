@@ -370,6 +370,16 @@ class BaseOutputTransport(FrameProcessor):
         else:
             await self._handle_frame(frame)
 
+    async def push_frame(self, frame: Frame, direction: FrameDirection):
+        """Push a frame to the next processor in the pipeline."""
+        if isinstance(frame, BotStoppedSpeakingFrame):
+            destination = frame.transport_destination
+            logger.debug(
+                f"Bot{f' [{destination}]' if destination else ''} stopped speaking"
+            )
+
+        await super().push_frame(frame, direction)
+
     async def _handle_frame(self, frame: Frame):
         """Handle frames by routing them to appropriate media senders."""
         if frame.transport_destination not in self._media_senders:
@@ -754,10 +764,6 @@ class BaseOutputTransport(FrameProcessor):
             # Any remaining leftover here (e.g. from an interruption) is
             # discarded rather than flushed, since it's no longer wanted.
             self._audio_buffer = bytearray()
-
-            logger.debug(
-                f"Bot{f' [{self._destination}]' if self._destination else ''} stopped speaking"
-            )
 
             downstream_frame = BotStoppedSpeakingFrame()
             downstream_frame.transport_destination = self._destination
